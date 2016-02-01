@@ -1,8 +1,5 @@
 #!/usr/bin/env python
 #
-# Test SDL_Pi_INA3221
-# John C. Shovic, SwitchDoc Labs
-# 03/05/2015
 #
 #
 
@@ -39,8 +36,6 @@ TCA9548_CONFIG_BUS3  =                (0x08)  # 1 = enable, 0 = disable
 # Main Program
 
 print ""
-print "Test SDL_Pi_TCA9548 Version 1.0 - SwitchDoc Labs"
-print ""
 print "Sample uses 0x70" 
 print "Program Started at:"+ time.strftime("%Y-%m-%d %H:%M:%S")
 print ""
@@ -48,7 +43,7 @@ print ""
 filename = time.strftime("%Y-%m-%d%H:%M:%SRTCTest") + ".txt"
 starttime = datetime.datetime.utcnow()
 
-tca9548 = SDL_Pi_TCA9548.SDL_Pi_TCA9545(addr=TCA9545_ADDRESS, bus_enable = TCA9545_CONFIG_BUS0)
+tca9548 = SDL_Pi_TCA9548.SDL_Pi_TCA9548(addr=TCA9548_ADDRESS, bus_enable = TCA9548_CONFIG_BUS0)
 
 # rotates through all 4 I2C buses and prints out what is available on each
 
