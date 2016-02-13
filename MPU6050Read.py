@@ -14,6 +14,7 @@ class MPU6050Read():
     def __init__(self,address,bus=1):
         self._address=address
         self._bus=smbus.SMBus(bus)
+        bus.write_byte_data(address, power_mgmt_1, 0)
         
 
     def _read_byte(self,adr):
@@ -58,7 +59,7 @@ class MPU6050Read():
     address = 0x68       # This is the address value read via the i2cdetect command
 
 # Now wake the 6050 up as it starts in sleep mode
-    bus.write_byte_data(address, power_mgmt_1, 0)
+#bus.write_byte_data(address, power_mgmt_1, 0)
 
     while True:
         time.sleep(0.1)
