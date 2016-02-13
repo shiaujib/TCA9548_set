@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-#import smbus
+import smbus
 import math
 import time
 
@@ -15,6 +15,7 @@ class MPU6050Read():
         self._address=address
         self._bus=smbus.SMBus(bus)
         bus.write_byte_data(address, power_mgmt_1, 0)
+    	self._bus.write_byte_data(self._address, power_mgmt_1, 0)
         
 
     def _read_byte(self,adr):
@@ -22,8 +23,8 @@ class MPU6050Read():
 
 
     def _read_word(self,adr):
-        high = self._bus._read_byte_data(self._address, adr)
-        low = self._bus._read_byte_data(self._address, adr+1)
+        high = self._bus.read_byte_data(self._address, adr)
+        low = self._bus.read_byte_data(self._address, adr+1)
         val = (high << 8) + low
         return val
 
