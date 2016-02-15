@@ -41,23 +41,29 @@ fileName=['sensor0','sensor1','sensor2','sensor3','sensor4','sensor5','sensor6',
 
 #/*=========================================================================*/
 
+def findElement(list,key):
+    for i in list:
+        if i==key:
+            return 1
+    return 0
+
+    
 # Main Program
 def main(argv):
     try:
         opts,args=getopt.getopt(argv,"h:n:",["help=","deviceNumber"])
     except getopt.GetoptError:
-        print 'usage:muti_accelerometer.py -i <deviceNumber>'
+        print 'usage:muti_accelerometer.py -n <deviceNumber>'
         sys.exit(2)
-    if len(argv)==0:
-        print 'usage:muti_accelerometer.py -i <deviceNumber>'
+    if findElement(argv,'-n')==0:
+        print 'usage:muti_accelerometer.py -n <deviceNumber>'
         sys.exit(2)
     for opt,arg in opts:
         if opts=='-h':
             print 'usage:muti_accelerometer.py -i <deviceNumber>'
-        elif opt in ("-i","--deviceNumber"):
+        elif opt in ("-n","--deviceNumber"):
             deviceNum=arg
         
-    
     print ""
     print "Sample uses 0x70" 
     print "Program Started at:"+ time.strftime("%Y-%m-%d %H:%M:%S")
