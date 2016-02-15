@@ -36,7 +36,7 @@ TCA9548_CONFIG_BUS5  =                (0x20)  # 1 = enable, 0 = disable
 TCA9548_CONFIG_BUS6  =                (0x40)  # 1 = enable, 0 = disable 
 TCA9548_CONFIG_BUS7  =                (0x80)  # 1 = enable, 0 = disable
 
-BusChannel=[0x01,0x02,0x04,0x08,0x10,0x20,0x40,0x80]
+BusChannel=[TCA9548_CONFIG_BUS0,TCA9548_CONFIG_BUS1,TCA9548_CONFIG_BUS2,TCA9548_CONFIG_BUS3]
 fileName=['sensor0','sensor1','sensor2','sensor3','sensor4','sensor5','sensor6','sensor7']
 
 #/*=========================================================================*/
@@ -72,26 +72,28 @@ def main(argv):
     starttime = datetime.datetime.utcnow()
 
 
-    tca9548 = TCA9548_Set.TCA9548_Set(addr=TCA9548_ADDRESS, bus_enable = TCA9548_CONFIG_BUS0)
+    tca9548 = TCA9548_Set.TCA9548_Set(addr=TCA9548_ADDRESS, bus_enable = TCA9548_CONFIG_BUS1)
     mpu6050 = MPU6050Read.MPU6050Read(0x68,1)
 
-    file0=open(fileName[0])
-    file1=open(fileName[1])
-    file2=open(fileName[2])
-    file3=open(fileName[3])
-    file4=open(fileName[4])
-    file5=open(fileName[5])
-    file6=open(fileName[6])
-    file7=open(fileName[7])
+    file0=open(fileName[0],'w')
+    file1=open(fileName[1],'w')
+    file2=open(fileName[2],'w')
+    file3=open(fileName[3],'w')
+    file4=open(fileName[4],'w')
+    file5=open(fileName[5],'w')
+    file6=open(fileName[6],'w')
+    file7=open(fileName[7],'w')
     fileList=[file0,file1,file2,file3,file4,file5,file6,file7]
         
 
     # rotates through all 4 I2C buses and prints out what is available on each
 
     while True:
-        fileIndex=0
+        fileIndex=1
         for channel in BusChannel:
-            tca9548.write_control_register(BusChannel[channel])
+   	    mpu6050 = MPU6050Read.MPU6050Read(0x68,1)
+            tca9548.write_control_register(BusChannel[fileIndex])
+	    print "-----------------BUS"+str(fileIndex)+"-------------"
             #get gyro and accelerometer value
             gyro_xout = mpu6050.read_word_2c(0x43)
             gyro_yout = mpu6050.read_word_2c(0x45)
@@ -99,9 +101,12 @@ def main(argv):
             accel_xout = mpu6050.read_word_2c(0x3b)
             accel_yout = mpu6050.read_word_2c(0x3d)
             accel_zout = mpu6050.read_word_2c(0x3f)
-            fileList[fileIndex].write("gyrox = %f gyroy = %f gyroz = %f \naccelx = %f accely = %f accelz = %f" %(gyro_xout,gyro_yout,gyro_zout,accel_xout,accel_yout,accel_zout))
+            #fileList[fileIndex].write("gyrox = %f gyroy = %f gyroz = %f \naccelx = %f accely = %f accelz = %f\n" %(gyro_xout,gyro_yout,gyro_zout,accel_xout,accel_yout,accel_zout))
+            fileList[fileIndex].write("accelx = %f accely = %f accelz = %f\n" %(accel_xout,accel_yout,accel_zout))
+            print "accelx = %f accely = %f accelz = %f\n" %(accel_xout,accel_yout,accel_zout)
             fileIndex+=1
-            if fileIndex>deviceNum:
+            if fileIndex>int(deviceNum):
+		fileIndex=1
                 break
 
 

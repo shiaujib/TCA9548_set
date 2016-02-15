@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-#import smbus
+import smbus
 import math
 import time
 
@@ -14,7 +14,6 @@ class MPU6050Read():
     def __init__(self,address,bus=1):
         self._address=address
         self._bus=smbus.SMBus(bus)
-        bus.write_byte_data(address, power_mgmt_1, 0)
     	self._bus.write_byte_data(self._address, power_mgmt_1, 0)
         
 

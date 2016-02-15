@@ -8,7 +8,7 @@
 #encoding: utf-8
  
 from datetime import datetime
-#import smbus
+import smbus
 
 # constants
 
