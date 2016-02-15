@@ -43,7 +43,7 @@ print ""
 filename = time.strftime("%Y-%m-%d%H:%M:%SRTCTest") + ".txt"
 starttime = datetime.datetime.utcnow()
 
-tca9548 = SDL_Pi_TCA9548.SDL_Pi_TCA9548(addr=TCA9548_ADDRESS, bus_enable = TCA9548_CONFIG_BUS0)
+tca9548 = TCA9548_Set.TCA9548_Set(addr=TCA9548_ADDRESS, bus_enable = TCA9548_CONFIG_BUS0)
 
 # rotates through all 4 I2C buses and prints out what is available on each
 

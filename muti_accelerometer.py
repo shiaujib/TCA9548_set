@@ -37,7 +37,7 @@ TCA9548_CONFIG_BUS6  =                (0x40)  # 1 = enable, 0 = disable
 TCA9548_CONFIG_BUS7  =                (0x80)  # 1 = enable, 0 = disable
 
 BusChannel=[0x01,0x02,0x04,0x08,0x10,0x20,0x40,0x80]
-fileName=[sensor0,sensor1,sensor2,sensor3,sensor4,sensor5,sensor6,sensor7]
+fileName=['sensor0','sensor1','sensor2','sensor3','sensor4','sensor5','sensor6','sensor7']
 
 #/*=========================================================================*/
 
@@ -66,7 +66,7 @@ def main(argv):
     starttime = datetime.datetime.utcnow()
 
 
-    tca9548 = SDL_Pi_TCA9548.SDL_Pi_TCA9548(addr=TCA9548_ADDRESS, bus_enable = TCA9548_CONFIG_BUS0)
+    tca9548 = TCA9548_Set.TCA9548_Set(addr=TCA9548_ADDRESS, bus_enable = TCA9548_CONFIG_BUS0)
     mpu6050 = MPU6050Read.MPU6050Read(0x68,1)
 
     file0=open(fileName[0])
@@ -98,5 +98,5 @@ def main(argv):
 
 
 if __name__=="__main__":
-    main()
+    main(sys.argv[1:])
 
