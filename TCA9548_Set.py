@@ -8,7 +8,7 @@
 #encoding: utf-8
  
 from datetime import datetime
-import smbus
+#import smbus
 
 # constants
 
@@ -32,7 +32,7 @@ TCA9548_CONFIG_BUS3  =                (0x08)  # 1 = enable, 0 = disable
 #/*=========================================================================*/
 
 
-class SDL_Pi_TCA9548():
+class TCA9548_Set():
 
 
 
