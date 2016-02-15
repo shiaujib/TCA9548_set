@@ -89,7 +89,7 @@ def main(argv):
     # rotates through all 4 I2C buses and prints out what is available on each
 
     while True:
-        print "-----------BUS 0-------------------"
+        fileIndex=0
         for channel in BusChannel:
             tca9548.write_control_register(BusChannel[channel])
             #get gyro and accelerometer value
@@ -99,8 +99,11 @@ def main(argv):
             accel_xout = mpu6050.read_word_2c(0x3b)
             accel_yout = mpu6050.read_word_2c(0x3d)
             accel_zout = mpu6050.read_word_2c(0x3f)
-            fileLisy[channel].write("gyrox = %f gyroy = %f gyroz = %f \naccelx = %f accely = %f accelz = %f" %(gyro_xout,gyro_yout,gyro_zout,accel_xout,accel_yout,accel_zout))
-            
+            fileList[fileIndex].write("gyrox = %f gyroy = %f gyroz = %f \naccelx = %f accely = %f accelz = %f" %(gyro_xout,gyro_yout,gyro_zout,accel_xout,accel_yout,accel_zout))
+            fileIndex+=1
+            if fileIndex>deviceNum:
+                break
+
 
 
 if __name__=="__main__":
