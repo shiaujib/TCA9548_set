@@ -11,8 +11,15 @@ import random
 import TCA9548_Set
 import MPU6050Read
 import subprocess
+import RPi.GPIO as GPIO
 
 
+#=========================================================================
+# button control
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(4,GPIO.IN,pull_up_down=GPIO.PUD_UP)
+
+#=========================================================================
 
 #/*=========================================================================
 #    I2C ADDRESS/BITS
@@ -38,6 +45,13 @@ TCA9548_CONFIG_BUS7  =                (0x80)  # 1 = enable, 0 = disable
 
 BusChannel=[TCA9548_CONFIG_BUS0,TCA9548_CONFIG_BUS1,TCA9548_CONFIG_BUS2,TCA9548_CONFIG_BUS3]
 fileName=['sensor0','sensor1','sensor2','sensor3','sensor4','sensor5','sensor6','sensor7']
+accel=[]
+gyro=[]
+
+accel.append([])  #create 2d list
+accel.append([])
+gyro.append([])
+gyro.append([])
 
 #/*=========================================================================*/
 
@@ -47,6 +61,26 @@ def findElement(list,key):
             return 1
     return 0
 
+
+def writeFile(deviceNum,count):
+    file0=open(fileName[0],'w')
+    file1=open(fileName[1],'w')
+    file2=open(fileName[2],'w')
+    file3=open(fileName[3],'w')
+    file4=open(fileName[4],'w')
+    file5=open(fileName[5],'w')
+    file6=open(fileName[6],'w')
+    file7=open(fileName[7],'w')
+    fileList=[file0,file1,file2,file3,file4,file5,file6,file7]
+    for i in range(deviceNum):
+        for j in range(0,count+1,3):
+            fileList[i].write("accelx = %f accely = %f accelz = %f\n" %(accel[i][j],accel[i][j+1],accel[i][j+2]))
+    print "Experimental done"
+            
+            
+            
+        
+    
     
 # Main Program
 def main(argv):
@@ -87,9 +121,10 @@ def main(argv):
         
 
     # rotates through all 4 I2C buses and prints out what is available on each
-
+    count=0
     while True:
         fileIndex=1
+        input_state=GPIO.input(4)   #get switch state
         for channel in BusChannel:
    	    mpu6050 = MPU6050Read.MPU6050Read(0x68,1)
             tca9548.write_control_register(BusChannel[fileIndex])
@@ -101,6 +136,12 @@ def main(argv):
             accel_xout = mpu6050.read_word_2c(0x3b)
             accel_yout = mpu6050.read_word_2c(0x3d)
             accel_zout = mpu6050.read_word_2c(0x3f)
+            gyro[fileIndex].append(gyro_xout)
+            gyro[fileIndex].append(gyro_yout)
+            gyro[fileIndex].append(gyro_zout)
+            accel[fileIndex].append(accel_xout)
+            accel[fileIndex].append(accel_yout)
+            accel[fileIndex].append(accel_zout)
             #fileList[fileIndex].write("gyrox = %f gyroy = %f gyroz = %f \naccelx = %f accely = %f accelz = %f\n" %(gyro_xout,gyro_yout,gyro_zout,accel_xout,accel_yout,accel_zout))
             fileList[fileIndex].write("accelx = %f accely = %f accelz = %f\n" %(accel_xout,accel_yout,accel_zout))
             print "accelx = %f accely = %f accelz = %f\n" %(accel_xout,accel_yout,accel_zout)
@@ -108,9 +149,17 @@ def main(argv):
             if fileIndex>int(deviceNum):
 		fileIndex=1
                 break
+        count+=1
+        if input_state==False:
+            print "Button Pressed experimental stop"
+            print "count Num = %d" %count
+            break
+    writeFile(deviceNum,count)
+        
 
 
 
 if __name__=="__main__":
     main(sys.argv[1:])
+
 
