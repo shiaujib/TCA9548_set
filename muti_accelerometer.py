@@ -47,6 +47,7 @@ fileName=['sensor0','sensor1','sensor2','sensor3','sensor4','sensor5','sensor6',
 #accel=[[] for i in range(int(1))]  #create dynamic list
 #gyro=[[] for i in range(int(1))]
 
+timeArray=[None]*100000000
 #/*=========================================================================*/
 
 def findElement(list,key):
@@ -65,11 +66,18 @@ def writeFile(accel , gyro ,deviceNum,count):
     file5=open(fileName[5],'w')
     file6=open(fileName[6],'w')
     file7=open(fileName[7],'w')
+    timeFile=open("dataTime",'w')
     fileList=[file0,file1,file2,file3,file4,file5,file6,file7]
     for i in range (int(deviceNum)):
         for j in range(0,count*3,3):
             fileList[i].write("accelx = %f accely = %f accelz = %f\n" %(accel[i][j],accel[i][j+1],accel[i][j+2]))
+    for i in range(count):
+    	timeFile.write("%s\n" %timeArray[i])
     print "Experimental done"
+    for i in range(int(deviceNum)):
+	fileList[i].close()
+    timeFile.close()
+    sys.exit(2)
             
             
             
@@ -137,6 +145,7 @@ def main(argv):
             #accel_xout = mpu6050.read_word_2c(0x3b)
             #accel_yout = mpu6050.read_word_2c(0x3d)
             #accel_zout = mpu6050.read_word_2c(0x3f)
+            #print "accelx = %f accely = %f accelz = %f\n" %(accel_xout,accel_yout,accel_zout)
             gyro[fileIndex].append(mpu6050.read_word_2c(0x43))
             gyro[fileIndex].append(mpu6050.read_word_2c(0x45))
             gyro[fileIndex].append(mpu6050.read_word_2c(0x47))
@@ -151,10 +160,15 @@ def main(argv):
             	accel[fileIndex+3].append(mpu6050_sla.read_word_2c(0x3b))
             	accel[fileIndex+3].append(mpu6050_sla.read_word_2c(0x3d))
             	accel[fileIndex+3].append(mpu6050_sla.read_word_2c(0x3f))
-
+	    
+		
             #fileList[fileIndex].write("gyrox = %f gyroy = %f gyroz = %f \naccelx = %f accely = %f accelz = %f\n" %(gyro_xout,gyro_yout,gyro_zout,accel_xout,accel_yout,accel_zout))
             #fileList[fileIndex].write("accelx = %f accely = %f accelz = %f\n" %(accel_xout,accel_yout,accel_zout))
             #print "accelx = %f accely = %f accelz = %f\n" %(accel_xout,accel_yout,accel_zout)
+	    
+	    timeTmp=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+	    timeArray[count]=timeTmp 
+
             fileIndex+=1
             if fileIndex>int(deviceNum):
 		fileIndex=0
@@ -163,7 +177,7 @@ def main(argv):
         if input_state==False:
             print "Button Pressed experimental stop"
             print "count Num = %d" %count
-            break
+            break 
     writeFile(accel,gyro,deviceNum,count)
         
 
