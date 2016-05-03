@@ -70,7 +70,7 @@ def writeFile(accel , gyro ,deviceNum,count):
     fileList=[file0,file1,file2,file3,file4,file5,file6,file7]
     for i in range (int(deviceNum)):
         for j in range(0,count*3,3):
-            fileList[i].write("accelx = %f accely = %f accelz = %f\n" %(accel[i][j],accel[i][j+1],accel[i][j+2]))
+            fileList[i].write("%f\t%f\t%f\n" %(accel[i][j],accel[i][j+1],accel[i][j+2]))
     for i in range(count):
     	timeFile.write("%s\n" %timeArray[i])
     print "Experimental done"
