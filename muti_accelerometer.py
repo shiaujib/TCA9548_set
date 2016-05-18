@@ -42,7 +42,7 @@ TCA9548_CONFIG_BUS6  =                (0x40)  # 1 = enable, 0 = disable
 TCA9548_CONFIG_BUS7  =                (0x80)  # 1 = enable, 0 = disable
 
 BusChannel=[TCA9548_CONFIG_BUS0,TCA9548_CONFIG_BUS1,TCA9548_CONFIG_BUS2]
-fileName=['sensor0','sensor1','sensor2','sensor3','sensor4','sensor5','sensor6','sensor7']
+fileName=['sensor1.txt','sensor2.txt','sensor3.txt','sensor4.txt','sensor5.txt','sensor6.txt','sensor7.txt','sensor8.txt']
 
 #accel=[[] for i in range(int(1))]  #create dynamic list
 #gyro=[[] for i in range(int(1))]
@@ -66,7 +66,7 @@ def writeFile(accel , gyro ,deviceNum,count):
     file5=open(fileName[5],'w')
     file6=open(fileName[6],'w')
     file7=open(fileName[7],'w')
-    timeFile=open("dataTime",'w')
+    timeFile=open("dataTime.txt",'w')
     fileList=[file0,file1,file2,file3,file4,file5,file6,file7]
     for i in range (int(deviceNum)):
         for j in range(0,count*3,3):
