@@ -124,6 +124,7 @@ def main(argv):
     file5=open(fileName[5],'w')
     file6=open(fileName[6],'w')
     file7=open(fileName[7],'w')
+    timeFile=open("dataTime.txt",'w')
     fileList=[file0,file1,file2,file3,file4,file5,file6,file7]
         
 
@@ -141,27 +142,35 @@ def main(argv):
             tca9548.write_control_register(BusChannel[fileIndex])
 	    #print "-----------------BUS"+str(fileIndex)+"-------------"
             #get gyro and accelerometer value
-            #gyro_xout = mpu6050.read_word_2c(0x43)
-            #gyro_yout = mpu6050.read_word_2c(0x45)
-            #gyro_zout = mpu6050.read_word_2c(0x47)
-            #accel_xout = mpu6050.read_word_2c(0x3b)
-            #accel_yout = mpu6050.read_word_2c(0x3d)
-            #accel_zout = mpu6050.read_word_2c(0x3f)
+            gyro_xout = mpu6050.read_word_2c(0x43)
+            gyro_yout = mpu6050.read_word_2c(0x45)
+            gyro_zout = mpu6050.read_word_2c(0x47)
+            accel_xout = mpu6050.read_word_2c(0x3b)
+            accel_yout = mpu6050.read_word_2c(0x3d)
+            accel_zout = mpu6050.read_word_2c(0x3f)
+            fileList[fileIndex].write("%f\t%f\t%f\n" %(accel_xout,accel_yout,accel_zout))
             #print "accelx = %f accely = %f accelz = %f\n" %(accel_xout,accel_yout,accel_zout)
-            gyro[fileIndex].append(mpu6050.read_word_2c(0x43))
+            '''gyro[fileIndex].append(mpu6050.read_word_2c(0x43))
             gyro[fileIndex].append(mpu6050.read_word_2c(0x45))
             gyro[fileIndex].append(mpu6050.read_word_2c(0x47))
             accel[fileIndex].append(mpu6050.read_word_2c(0x3b))
             accel[fileIndex].append(mpu6050.read_word_2c(0x3d))
-            accel[fileIndex].append(mpu6050.read_word_2c(0x3f))
+            accel[fileIndex].append(mpu6050.read_word_2c(0x3f))'''
 	    if fileIndex==0 or fileIndex==1:
- 	        mpu6050_sla=MPU6050Read.MPU6050Read(0x69,1)
+                gyro_xout = mpu6050.read_word_2c(0x43)
+                gyro_yout = mpu6050.read_word_2c(0x45)
+                gyro_zout = mpu6050.read_word_2c(0x47)
+                accel_xout = mpu6050.read_word_2c(0x3b)
+                accel_yout = mpu6050.read_word_2c(0x3d)
+                accel_zout = mpu6050.read_word_2c(0x3f)
+                fileList[fileIndex+(deviceNum-2)].write("%f\t%f\t%f\n" %(accel_xout,accel_yout,accel_zout))
+ 	        '''mpu6050_sla=MPU6050Read.MPU6050Read(0x69,1)
             	gyro[fileIndex+4].append(mpu6050_sla.read_word_2c(0x43))
             	gyro[fileIndex+4].append(mpu6050_sla.read_word_2c(0x45))
             	gyro[fileIndex+4].append(mpu6050_sla.read_word_2c(0x47))
             	accel[fileIndex+4].append(mpu6050_sla.read_word_2c(0x3b))
             	accel[fileIndex+4].append(mpu6050_sla.read_word_2c(0x3d))
-            	accel[fileIndex+4].append(mpu6050_sla.read_word_2c(0x3f))
+            	accel[fileIndex+4].append(mpu6050_sla.read_word_2c(0x3f))'''
 	    
 		
             #fileList[fileIndex].write("gyrox = %f gyroy = %f gyroz = %f \naccelx = %f accely = %f accelz = %f\n" %(gyro_xout,gyro_yout,gyro_zout,accel_xout,accel_yout,accel_zout))
@@ -169,7 +178,8 @@ def main(argv):
             #print "accelx = %f accely = %f accelz = %f\n" %(accel_xout,accel_yout,accel_zout)
 	    
 	    timeTmp=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-	    timeArray[count]=timeTmp 
+    	    timeFile.write("%s\n", timeTmp)
+	    #timeArray[count]=timeTmp 
             fileIndex+=1
             if fileIndex>int(deviceNum):
 		fileIndex=0
@@ -179,7 +189,7 @@ def main(argv):
             print "Button Pressed experimental stop"
             print "count Num = %d" %count
             break 
-    writeFile(accel,gyro,deviceNum,count)
+    #writeFile(accel,gyro,deviceNum,count)
         
 
 
