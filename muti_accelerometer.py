@@ -44,7 +44,7 @@ TCA9548_CONFIG_BUS7  =                (0x80)  # 1 = enable, 0 = disable
 
 BusChannel=[TCA9548_CONFIG_BUS0,TCA9548_CONFIG_BUS1,TCA9548_CONFIG_BUS2,
 TCA9548_CONFIG_BUS3,TCA9548_CONFIG_BUS4]
-fileName=['sensor1.txt','sensor2.txt','sensor3.txt','sensor4.txt','sensor5.txt','sensor6.txt','sensor7.txt','sensor8.txt']
+#fileName=[subName+'sensor1.txt','sensor2.txt','sensor3.txt','sensor4.txt','sensor5.txt','sensor6.txt','sensor7.txt','sensor8.txt']
 
 #accel=[[] for i in range(int(1))]  #create dynamic list
 #gyro=[[] for i in range(int(1))]
@@ -89,22 +89,28 @@ def writeFile(accel , gyro ,deviceNum,count):
 # Main Program
 def main(argv):
     try:
-        opts,args=getopt.getopt(argv,"h:n:",["help=","deviceNumber"])
+        opts,args=getopt.getopt(argv,"h:n:s:",["help=","deviceNumber"])
     except getopt.GetoptError:
-        print 'usage:muti_accelerometer.py -n <deviceNumber>'
+        print 'usage:muti_accelerometer.py -n <deviceNumber> -s <subjectName>'
         sys.exit(2)
     if findElement(argv,'-n')==0:
-        print 'usage:muti_accelerometer.py -n <deviceNumber>'
+        print 'usage:muti_accelerometer.py -n <deviceNumber> -s <subjectName>'
+        sys.exit(2)
+    if findElement(argv,'-s')==0:
+        print 'usage:muti_accelerometer.py -n <deviceNumber> -s <subjectName>'
         sys.exit(2)
     for opt,arg in opts:
         if opts=='-h':
             print 'usage:muti_accelerometer.py -i <deviceNumber>'
         elif opt in ("-n","--deviceNumber"):
             deviceNum=arg
+	elif opt in ("-s","--subjectName"):
+            subName=arg
 
     accel=[[] for i in range(int(deviceNum))]  #create dynamic list
     gyro=[[] for i in range(int(deviceNum))]
-        
+    fileName=[subName+'_sensor1.txt',subName+'_sensor2.txt',subName+'_sensor3.txt',subName+'_sensor4.txt',subName+'_sensor5.txt',subName+'_sensor6.txt',subName+'_sensor7.txt',subName+'_sensor8.txt']
+    
     print ""
     print "Sample uses 0x70" 
     print "Program Started at:"+ time.strftime("%Y-%m-%d %H:%M:%S")
@@ -196,6 +202,8 @@ def main(argv):
 
 
 if __name__=="__main__":
+    sub_name=None
     main(sys.argv[1:])
+        
 
 
