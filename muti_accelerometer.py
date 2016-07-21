@@ -43,7 +43,7 @@ TCA9548_CONFIG_BUS6  =                (0x40)  # 1 = enable, 0 = disable
 TCA9548_CONFIG_BUS7  =                (0x80)  # 1 = enable, 0 = disable
 
 BusChannel=[TCA9548_CONFIG_BUS0,TCA9548_CONFIG_BUS1,TCA9548_CONFIG_BUS2,
-TCA9548_CONFIG_BUS3]
+TCA9548_CONFIG_BUS3,TCA9548_CONFIG_BUS4]
 fileName=['sensor1.txt','sensor2.txt','sensor3.txt','sensor4.txt','sensor5.txt','sensor6.txt','sensor7.txt','sensor8.txt']
 
 #accel=[[] for i in range(int(1))]  #create dynamic list
@@ -157,13 +157,14 @@ def main(argv):
             accel[fileIndex].append(mpu6050.read_word_2c(0x3d))
             accel[fileIndex].append(mpu6050.read_word_2c(0x3f))'''
 	    if fileIndex==0 or fileIndex==1:
-                gyro_xout = mpu6050.read_word_2c(0x43)
-                gyro_yout = mpu6050.read_word_2c(0x45)
-                gyro_zout = mpu6050.read_word_2c(0x47)
-                accel_xout = mpu6050.read_word_2c(0x3b)
-                accel_yout = mpu6050.read_word_2c(0x3d)
-                accel_zout = mpu6050.read_word_2c(0x3f)
-                fileList[fileIndex+(deviceNum-2)].write("%f\t%f\t%f\n" %(accel_xout,accel_yout,accel_zout))
+ 	        mpu6050_sla=MPU6050Read.MPU6050Read(0x69,1)
+                gyro_xout = mpu6050_sla.read_word_2c(0x43)
+                gyro_yout = mpu6050_sla.read_word_2c(0x45)
+                gyro_zout = mpu6050_sla.read_word_2c(0x47)
+                accel_xout = mpu6050_sla.read_word_2c(0x3b)
+                accel_yout = mpu6050_sla.read_word_2c(0x3d)
+                accel_zout = mpu6050_sla.read_word_2c(0x3f)
+                fileList[fileIndex+(int(deviceNum)-2)].write("%f\t%f\t%f\n" %(accel_xout,accel_yout,accel_zout))
  	        '''mpu6050_sla=MPU6050Read.MPU6050Read(0x69,1)
             	gyro[fileIndex+4].append(mpu6050_sla.read_word_2c(0x43))
             	gyro[fileIndex+4].append(mpu6050_sla.read_word_2c(0x45))
@@ -178,7 +179,7 @@ def main(argv):
             #print "accelx = %f accely = %f accelz = %f\n" %(accel_xout,accel_yout,accel_zout)
 	    
 	    timeTmp=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    	    timeFile.write("%s\n", timeTmp)
+    	    timeFile.write("%s\n" %(timeTmp))
 	    #timeArray[count]=timeTmp 
             fileIndex+=1
             if fileIndex>int(deviceNum):
