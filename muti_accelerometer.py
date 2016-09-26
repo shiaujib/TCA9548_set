@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 #
 
-
+from socket import *
+import os
+import struct
 import sys,getopt
 import time
 import datetime
@@ -10,6 +12,8 @@ import TCA9548_Set
 import MPU6050Read
 import subprocess
 import RPi.GPIO as GPIO
+import threading
+import numpy as np
 
 sensitive4g = 0x1c
 
@@ -148,6 +152,15 @@ subName+'_sensor10.txt',subName+'_sensor11.txt',subName+'_sensor12.txt',subName+
     # rotates through all 4 I2C buses and prints out what is available on each
     count=0
     flag=0
+    addr = ('192.168.141.164',8000)
+    bufsize = 1024
+    filename = 'sensor1.txt'
+    sendsock = socket(AF_INET,SOCK_STREAM)
+    sendsock.bind(addr)
+    sendsock.listen(5)
+    print "waiting for client connect"
+    conn,addr = sendsock.accept()
+    print "server already connect client...->",addr
     while True:
         fileIndex=0
         input_state=GPIO.input(4)   #get switch state
@@ -167,6 +180,7 @@ subName+'_sensor10.txt',subName+'_sensor11.txt',subName+'_sensor12.txt',subName+
             accel_yout = mpu6050.read_word_2c(0x3d)
             accel_zout = mpu6050.read_word_2c(0x3f)
             fileList[fileIndex].write("%f\t%f\t%f\n" %(accel_xout,accel_yout,accel_zout))
+	    conn.send("%2s\t%5s\t%5s\t%5s"%(str(fileIndex),str(accel_xout),str(accel_yout),str(accel_zout)))
             #print "accelx = %f accely = %f accelz = %f\n" %(accel_xout,accel_yout,accel_zout)
             '''gyro[fileIndex].append(mpu6050.read_word_2c(0x43))
             gyro[fileIndex].append(mpu6050.read_word_2c(0x45))
@@ -207,6 +221,10 @@ subName+'_sensor10.txt',subName+'_sensor11.txt',subName+'_sensor12.txt',subName+
         if input_state==False:
             print "Button Pressed experimental stop"
             print "count Num = %d" %count
+            sendsock.close()
+            conn.close()
+            print "Close socket"
+            sys.exit()
             break 
     #writeFile(accel,gyro,deviceNum,count)
         
