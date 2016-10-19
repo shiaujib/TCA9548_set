@@ -127,7 +127,8 @@ subName+'_sensor10.txt',subName+'_sensor11.txt',subName+'_sensor12.txt',subName+
     print "Sample uses 0x70" 
     print "Program Started at:"+ time.strftime("%Y-%m-%d %H:%M:%S")
     print ""
-
+    mode=0
+    mode=raw_input("Please enter the mode you want")
     starttime = datetime.datetime.utcnow()
 
 
@@ -183,10 +184,11 @@ subName+'_sensor10.txt',subName+'_sensor11.txt',subName+'_sensor12.txt',subName+
             accel_xout=accel_xout/16384
             accel_yout=accel_yout/16384
             accel_zout=accel_zout/16384
-            fileList[fileIndex].write("%f\t%f\t%f\n" %(accel_xout,accel_yout,accel_zout))
-            val=math.sqrt(math.pow(int(accel_xout),2)+math.pow(int(accel_yout),2)+math.pow(int(accel_zout),2))
-            accel_tmp[fileIndex]=val
-            conn.send("%5s"%(str(val)))
+            if mode==0:
+                fileList[fileIndex].write("%f\t%f\t%f\n" %(accel_xout,accel_yout,accel_zout))
+            else if mode==1:
+                val=math.sqrt(math.pow(int(accel_xout),2)+math.pow(int(accel_yout),2)+math.pow(int(accel_zout),2))
+                conn.send("%5s"%(str(val)))
 	    #conn.send("%2s\t%5s\t%5s\t%5s"%(str(fileIndex),str(accel_xout),str(accel_yout),str(accel_zout)))
             #print "accelx = %f accely = %f accelz = %f\n" %(accel_xout,accel_yout,accel_zout)
             '''gyro[fileIndex].append(mpu6050.read_word_2c(0x43))
@@ -206,9 +208,11 @@ subName+'_sensor10.txt',subName+'_sensor11.txt',subName+'_sensor12.txt',subName+
                 accel_xout=accel_xout/16384
                 accel_yout=accel_yout/16384
                 accel_zout=accel_zout/16384
-                #fileList[fileIndex+(int(deviceNum)-2)].write("%f\t%f\t%f\n" %(accel_xout,accel_yout,accel_zout))
-                val=math.sqrt(math.pow(int(accel_xout),2)+math.pow(int(accel_yout),2)+math.pow(int(accel_zout),2))
-                conn.send("%5s"%(str(val)))
+                if mode==0:
+                    fileList[fileIndex+(int(deviceNum)-2)].write("%f\t%f\t%f\n" %(accel_xout,accel_yout,accel_zout))
+                else if mode==1:
+                    val=math.sqrt(math.pow(int(accel_xout),2)+math.pow(int(accel_yout),2)+math.pow(int(accel_zout),2))
+                    conn.send("%5s"%(str(val)))
                 #print("%f\t%f\t%f\n" %(accel_xout,accel_yout,accel_zout))
  	        #mpu6050_sla=MPU6050Read.MPU6050Read(0x69,1)
             	#gyro[fileIndex+4].append(mpu6050_sla.read_word_2c(0x43))
