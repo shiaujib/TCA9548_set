@@ -3,6 +3,7 @@
 import smbus
 import math
 import time
+import subprocess
 
 
 # Power management registers
@@ -15,9 +16,13 @@ class MPU6050Read():
     def __init__(self,address,bus=1):
         self._address=address
         self._bus=smbus.SMBus(bus)
-    	self._bus.write_byte_data(self._address, power_mgmt_1, 0)
-    
-        
+        self._bus.write_byte_data(self._address, power_mgmt_1, 0)
+        '''
+        try:
+            self._bus.write_byte_data(self._address, power_mgmt_1, 0)
+        except IOError:
+            subprocess.call(['i2cdetect','-y','1'])
+        '''        
 
     def _read_byte(self,adr):
         return self._bus.read_byte_data(self._address, adr)
@@ -35,7 +40,6 @@ class MPU6050Read():
             return -((65535 - val) + 1)
         else:
             return val
-
     def dist(a,b):
         return math.sqrt((a*a)+(b*b))
 
@@ -56,6 +60,7 @@ class MPU6050Read():
         print "accel_zout: ", accel_zout, " scaled: ", accel_zout_scaled
 
 ################################     main      ######################################
+'''
     bus = smbus.SMBus(1) # or bus = smbus.SMBus(1) for Revision 2 boards
     address = 0x68       # This is the address value read via the i2cdetect command
 
@@ -97,4 +102,4 @@ class MPU6050Read():
 
         print "x rotation: " , get_x_rotation(accel_xout_scaled, accel_yout_scaled, accel_zout_scaled)
         print "y rotation: " , get_y_rotation(accel_xout_scaled, accel_yout_scaled, accel_zout_scaled)
-
+'''
