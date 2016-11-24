@@ -48,7 +48,7 @@ TCA9548_CONFIG_BUS6  =                (0x40)  # 1 = enable, 0 = disable
 TCA9548_CONFIG_BUS7  =                (0x80)  # 1 = enable, 0 = disable
 
 BusChannel=[TCA9548_CONFIG_BUS0,TCA9548_CONFIG_BUS1,TCA9548_CONFIG_BUS2,
-TCA9548_CONFIG_BUS3,TCA9548_CONFIG_BUS4,TCA9548_CONFIG_BUS6
+TCA9548_CONFIG_BUS3,TCA9548_CONFIG_BUS4,TCA9548_CONFIG_BUS5,TCA9548_CONFIG_BUS6
 ,TCA9548_CONFIG_BUS7]
 
 
@@ -137,6 +137,7 @@ subName+'_sensor10.txt',subName+'_sensor11.txt',subName+'_sensor12.txt',subName+
     #mode=raw_input("Please enter the mode you want")
     starttime = datetime.datetime.utcnow()
     start=time.time()
+    startflag=0
 
 
     tca9548 = TCA9548_Set.TCA9548_Set(addr=TCA9548_ADDRESS, bus_enable = TCA9548_CONFIG_BUS1)
@@ -179,10 +180,13 @@ subName+'_sensor10.txt',subName+'_sensor11.txt',subName+'_sensor12.txt',subName+
         fileIndex=0
         input_state=GPIO.input(4)   #get switch state
 	if flag==0:
-	    print "getting data please press button to stop........"
+	    print "System initialize........"
 	    flag+=1
         for channel in BusChannel:
 	    #print channel
+            if startflag==0 and count>1:
+	        print "start getting data press button to stop"
+                startflag=1
    	    mpu6050 = MPU6050Read.MPU6050Read(0x68,1)
             tca9548.write_control_register(BusChannel[fileIndex])
 	    #print "-----------------BUS"+str(fileIndex)+"-------------"
@@ -199,7 +203,7 @@ subName+'_sensor10.txt',subName+'_sensor11.txt',subName+'_sensor12.txt',subName+
             gyro_xout=gyro_xout/131.0
             gyro_yout=gyro_yout/131.0
             gyro_zout=gyro_zout/131.0
-            if mode==0:
+            if mode==0 and count>1:
                 end=time.time()
                 realtime=end-start-7.1
                 if realtime<0:
@@ -210,7 +214,7 @@ subName+'_sensor10.txt',subName+'_sensor11.txt',subName+'_sensor12.txt',subName+
                 conn.send("%5s"%(str(val)))
 	    #conn.send("%2s\t%5s\t%5s\t%5s"%(str(fileIndex),str(accel_xout),str(accel_yout),str(accel_zout)))
             #print "accelx = %f accely = %f accelz = %f\n" %(accel_xout,accel_yout,accel_zout)
-	    if fileIndex==0 or fileIndex==1 or fileIndex==2 or fileIndex==3:
+	    if fileIndex==0 or fileIndex==1 or fileIndex==2 or fileIndex==3 or fileIndex==7:
  	        mpu6050_sla=MPU6050Read.MPU6050Read(0x69,1)
                 gyro_xout = mpu6050_sla.read_word_2c(0x43)
                 gyro_yout = mpu6050_sla.read_word_2c(0x45)
@@ -224,11 +228,11 @@ subName+'_sensor10.txt',subName+'_sensor11.txt',subName+'_sensor12.txt',subName+
                 gyro_xout=gyro_xout/131.0
                 gyro_yout=gyro_yout/131.0
                 gyro_zout=gyro_zout/131.0
-                if mode==0 and fileIndex==5:
+                if mode==0 and fileIndex==7:
                     end=time.time()
                     realtime=end-start-7.0
-                    fileList[fileIndex+7].write("%f\t%f\t%f\t%f\t%f\t%f\t%f\n" %(accel_xout,accel_yout,accel_zout,gyro_xout,gyro_yout,gyro_zout,realtime))
-                if mode==0:
+                    fileList[fileIndex+5].write("%f\t%f\t%f\t%f\t%f\t%f\t%f\n" %(accel_xout,accel_yout,accel_zout,gyro_xout,gyro_yout,gyro_zout,realtime))
+                elif mode==0:
                     end=time.time()
                     realtime=end-start-7.0
                     fileList[fileIndex+8].write("%f\t%f\t%f\t%f\t%f\t%f\t%f\n" %(accel_xout,accel_yout,accel_zout,gyro_xout,gyro_yout,gyro_zout,realtime))
@@ -252,14 +256,18 @@ subName+'_sensor10.txt',subName+'_sensor11.txt',subName+'_sensor12.txt',subName+
     	    timeFile.write("%s\n" %(timeTmp))
 	    #timeArray[count]=timeTmp 
             fileIndex+=1
+            '''
             if fileIndex>int(deviceNum):
 		fileIndex=0
                 break
+            '''
         '''
         for i in range(int(deviceNum)):
             conn.send("%5s" %(accel_tmp[i]))
         '''
         count+=1
+
+        '''
         if input_state==False:
             print "Button Pressed experimental stop"
             print "count Num = %d" %count
@@ -268,7 +276,8 @@ subName+'_sensor10.txt',subName+'_sensor11.txt',subName+'_sensor12.txt',subName+
                 conn.close()
                 print "Close socket"
             sys.exit()
-            break 
+            break
+        ''' 
     #writeFile(accel,gyro,deviceNum,count)
         
 
