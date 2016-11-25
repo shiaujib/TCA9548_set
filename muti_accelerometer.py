@@ -16,6 +16,7 @@ import threading
 import numpy as np
 import datetime
 import time
+import math
 sensitive4g = 0x1c
 
 #=========================================================================
@@ -48,7 +49,7 @@ TCA9548_CONFIG_BUS6  =                (0x40)  # 1 = enable, 0 = disable
 TCA9548_CONFIG_BUS7  =                (0x80)  # 1 = enable, 0 = disable
 
 BusChannel=[TCA9548_CONFIG_BUS0,TCA9548_CONFIG_BUS1,TCA9548_CONFIG_BUS2,
-TCA9548_CONFIG_BUS3,TCA9548_CONFIG_BUS4,TCA9548_CONFIG_BUS5,TCA9548_CONFIG_BUS6
+TCA9548_CONFIG_BUS3,TCA9548_CONFIG_BUS5,TCA9548_CONFIG_BUS6
 ,TCA9548_CONFIG_BUS7]
 
 
@@ -164,7 +165,7 @@ subName+'_sensor10.txt',subName+'_sensor11.txt',subName+'_sensor12.txt',subName+
     accel_tmp=[0]*int(deviceNum)
     count=0
     flag=0
-    addr = ('192.168.141.164',8000)
+    addr = ('192.168.43.221',8000)
     bufsize = 1024
     filename = 'sensor1.txt'
     if mode==1:
@@ -183,7 +184,7 @@ subName+'_sensor10.txt',subName+'_sensor11.txt',subName+'_sensor12.txt',subName+
 	    print "System initialize........"
 	    flag+=1
         for channel in BusChannel:
-	    #print channel
+#	    print channel
             if startflag==0 and count>1:
 	        print "start getting data press button to stop"
                 startflag=1
@@ -211,6 +212,8 @@ subName+'_sensor10.txt',subName+'_sensor11.txt',subName+'_sensor12.txt',subName+
                 fileList[fileIndex].write("%f\t%f\t%f\t%f\t%f\t%f\t%f\n" %(accel_xout,accel_yout,accel_zout,gyro_xout,gyro_yout,gyro_zout,realtime))
             elif mode==1:
                 val=math.sqrt(math.pow(int(accel_xout),2)+math.pow(int(accel_yout),2)+math.pow(int(accel_zout),2))
+                val=int(val)
+                val=round(val,4)
                 conn.send("%5s"%(str(val)))
 	    #conn.send("%2s\t%5s\t%5s\t%5s"%(str(fileIndex),str(accel_xout),str(accel_yout),str(accel_zout)))
             #print "accelx = %f accely = %f accelz = %f\n" %(accel_xout,accel_yout,accel_zout)
@@ -236,8 +239,10 @@ subName+'_sensor10.txt',subName+'_sensor11.txt',subName+'_sensor12.txt',subName+
                     end=time.time()
                     realtime=end-start-7.0
                     fileList[fileIndex+8].write("%f\t%f\t%f\t%f\t%f\t%f\t%f\n" %(accel_xout,accel_yout,accel_zout,gyro_xout,gyro_yout,gyro_zout,realtime))
-                elif mode==1:
+                if mode==1:
                     val=math.sqrt(math.pow(int(accel_xout),2)+math.pow(int(accel_yout),2)+math.pow(int(accel_zout),2))
+                    val=int(val)
+                    val=round(val,4)
                     conn.send("%5s"%(str(val)))
                 #print("%f\t%f\t%f\n" %(accel_xout,accel_yout,accel_zout))
  	        #mpu6050_sla=MPU6050Read.MPU6050Read(0x69,1)

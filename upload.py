@@ -20,12 +20,31 @@ if not creds or creds.invalid:
             if flags else tools.run(flow, store)
 DRIVE = build('drive', 'v2', http=creds.authorize(Http()))
 
+flag=0
+name=None
+while not name:
+    try:
+        name=raw_input("Please enter subject name :")
+        if not name:
+            raise ValueError('empty String')
+
+    except ValueError as e:
+        print(e)
+    
 FILES = (
-    ('sensor1.txt', False),
-    ('sensor2.txt', False),
-    ('sensor3.txt', False),
-    ('sensor4.txt', False),
-    ('sensor5.txt', False),
+    (name+'_sensor1.txt', False),
+    (name+'_sensor2.txt', False),
+    (name+'_sensor3.txt', False),
+    (name+'_sensor4.txt', False),
+    (name+'_sensor5.txt', False),
+    (name+'_sensor6.txt', False),
+    (name+'_sensor7.txt', False),
+    (name+'_sensor8.txt', False),
+    (name+'_sensor9.txt', False),
+    (name+'_sensor10.txt', False),
+    (name+'_sensor11.txt', False),
+    (name+'_sensor12.txt', False),
+    (name+'_sensor13.txt', False),
 )
 
 for filename, convert in FILES:
@@ -35,7 +54,7 @@ for filename, convert in FILES:
     if res:
         print('Uploaded "%s" (%s)' % (filename, res['mimeType']))
 
-if res:
+'''if res:
     MIMETYPE = 'application/pdf'
     res, data = DRIVE._http.request(res['exportLinks'][MIMETYPE])
     if data:
@@ -43,4 +62,4 @@ if res:
         with open(fn, 'wb') as fh:
             fh.write(data)
         print('Downloaded "%s" (%s)' % (fn, MIMETYPE))
-
+'''
