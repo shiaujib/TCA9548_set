@@ -49,8 +49,7 @@ TCA9548_CONFIG_BUS6  =                (0x40)  # 1 = enable, 0 = disable
 TCA9548_CONFIG_BUS7  =                (0x80)  # 1 = enable, 0 = disable
 
 BusChannel=[TCA9548_CONFIG_BUS0,TCA9548_CONFIG_BUS1,TCA9548_CONFIG_BUS2,
-TCA9548_CONFIG_BUS3,TCA9548_CONFIG_BUS4,TCA9548_CONFIG_BUS5,TCA9548_CONFIG_BUS6
-,TCA9548_CONFIG_BUS7]
+TCA9548_CONFIG_BUS3,TCA9548_CONFIG_BUS5,TCA9548_CONFIG_BUS7]
 
 
 
@@ -128,8 +127,7 @@ def main(argv):
     
     accel=[[] for i in range(int(deviceNum))]  #create dynamic list
     gyro=[[] for i in range(int(deviceNum))]
-    fileName=[subName+'_sensor1.txt',subName+'_sensor2.txt',subName+'_sensor3.txt',subName+'_sensor4.txt',subName+'_sensor5.txt',subName+'_sensor6.txt',subName+'_sensor7.txt',subName+'_sensor8.txt',subName+'_sensor9.txt',
-subName+'_sensor10.txt',subName+'_sensor11.txt',subName+'_sensor12.txt',subName+'_sensor13.txt']
+    fileName=[subName+'_sensor1.txt',subName+'_sensor2.txt',subName+'_sensor3.txt',subName+'_sensor4.txt',subName+'_sensor5.txt',subName+'_sensor6.txt']
     
     print ""
     print "Sample uses 0x70" 
@@ -150,15 +148,8 @@ subName+'_sensor10.txt',subName+'_sensor11.txt',subName+'_sensor12.txt',subName+
     file3=open(fileName[3],'w')
     file4=open(fileName[4],'w')
     file5=open(fileName[5],'w')
-    file6=open(fileName[6],'w')
-    file7=open(fileName[7],'w')
-    file8=open(fileName[8],'w')
-    file9=open(fileName[9],'w')
-    file10=open(fileName[10],'w')
-    file11=open(fileName[11],'w')
-    file12=open(fileName[12],'w')
     timeFile=open("dataTime.txt",'w')
-    fileList=[file0,file1,file2,file3,file4,file5,file6,file7,file8,file9,file10,file11,file12]
+    fileList=[file0,file1,file2,file3,file4,file5]
         
 
     # rotates through all 4 I2C buses and prints out what is available on each
@@ -184,9 +175,10 @@ subName+'_sensor10.txt',subName+'_sensor11.txt',subName+'_sensor12.txt',subName+
 	    print "System initialize........"
 	    flag+=1
         for channel in BusChannel:
-#	    print channel
+	    #print channel
             if startflag==0 and count>1:
 	        print "start getting data press button to stop"
+                start=time.time()
                 startflag=1
    	    mpu6050 = MPU6050Read.MPU6050Read(0x68,1)
             tca9548.write_control_register(BusChannel[fileIndex])
@@ -206,17 +198,18 @@ subName+'_sensor10.txt',subName+'_sensor11.txt',subName+'_sensor12.txt',subName+
             gyro_zout=gyro_zout/131.0
             if mode==0 and count>1:
                 end=time.time()
-                realtime=end-start-7.1
+                realtime=end-start
                 if realtime<0:
                     realtime=0
                 fileList[fileIndex].write("%f\t%f\t%f\t%f\t%f\t%f\t%f\n" %(accel_xout,accel_yout,accel_zout,gyro_xout,gyro_yout,gyro_zout,realtime))
             elif mode==1:
-                val=math.sqrt(math.pow(int(accel_xout),2)+math.pow(int(accel_yout),2)+math.pow(int(accel_zout),2))
+                val=math.sqrt(math.pow(int(gyro_xout),2)+math.pow(int(gyro_yout),2)+math.pow(int(gyro_zout),2))
                 val=int(val)
                 val=round(val,4)
                 conn.send("%5s"%(str(val)))
 	    #conn.send("%2s\t%5s\t%5s\t%5s"%(str(fileIndex),str(accel_xout),str(accel_yout),str(accel_zout)))
             #print "accelx = %f accely = %f accelz = %f\n" %(accel_xout,accel_yout,accel_zout)
+            '''
 	    if fileIndex==0 or fileIndex==1 or fileIndex==2 or fileIndex==3 or fileIndex==7:
  	        mpu6050_sla=MPU6050Read.MPU6050Read(0x69,1)
                 gyro_xout = mpu6050_sla.read_word_2c(0x43)
@@ -240,7 +233,7 @@ subName+'_sensor10.txt',subName+'_sensor11.txt',subName+'_sensor12.txt',subName+
                     realtime=end-start-7.0
                     fileList[fileIndex+8].write("%f\t%f\t%f\t%f\t%f\t%f\t%f\n" %(accel_xout,accel_yout,accel_zout,gyro_xout,gyro_yout,gyro_zout,realtime))
                 if mode==1:
-                    val=math.sqrt(math.pow(int(accel_xout),2)+math.pow(int(accel_yout),2)+math.pow(int(accel_zout),2))
+                    val=math.sqrt(math.pow(int(gyro_xout),2)+math.pow(int(gyro_yout),2)+math.pow(int(gyro_zout),2))
                     val=int(val)
                     val=round(val,4)
                     conn.send("%5s"%(str(val)))
@@ -259,20 +252,15 @@ subName+'_sensor10.txt',subName+'_sensor11.txt',subName+'_sensor12.txt',subName+
             #print "accelx = %f accely = %f accelz = %f\n" %(accel_xout,accel_yout,accel_zout)
 	    timeTmp=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     	    timeFile.write("%s\n" %(timeTmp))
-	    #timeArray[count]=timeTmp 
+	    #timeArray[count]=timeTmp
+            ''' 
             fileIndex+=1
-            '''
-            if fileIndex>int(deviceNum):
-		fileIndex=0
-                break
-            '''
         '''
         for i in range(int(deviceNum)):
             conn.send("%5s" %(accel_tmp[i]))
         '''
         count+=1
 
-        '''
         if input_state==False:
             print "Button Pressed experimental stop"
             print "count Num = %d" %count
@@ -282,7 +270,6 @@ subName+'_sensor10.txt',subName+'_sensor11.txt',subName+'_sensor12.txt',subName+
                 print "Close socket"
             sys.exit()
             break
-        ''' 
     #writeFile(accel,gyro,deviceNum,count)
         
 
