@@ -49,9 +49,11 @@ TCA9548_CONFIG_BUS6  =                (0x40)  # 1 = enable, 0 = disable
 TCA9548_CONFIG_BUS7  =                (0x80)  # 1 = enable, 0 = disable
 
 BusChannel=[TCA9548_CONFIG_BUS0,TCA9548_CONFIG_BUS1,TCA9548_CONFIG_BUS2,
-TCA9548_CONFIG_BUS3,TCA9548_CONFIG_BUS5,TCA9548_CONFIG_BUS7]
+TCA9548_CONFIG_BUS6,TCA9548_CONFIG_BUS5,TCA9548_CONFIG_BUS7]
 
 
+#BusChannel=[TCA9548_CONFIG_BUS0,TCA9548_CONFIG_BUS1,TCA9548_CONFIG_BUS2,
+#TCA9548_CONFIG_BUS5,TCA9548_CONFIG_BUS7]
 
 #BusChannel=[TCA9548_CONFIG_BUS0,TCA9548_CONFIG_BUS1,TCA9548_CONFIG_BUS2,
 #TCA9548_CONFIG_BUS3,TCA9548_CONFIG_BUS4,TCA9548_CONFIG_BUS5,TCA9548_CONFIG_BUS6
@@ -175,7 +177,7 @@ def main(argv):
 	    print "System initialize........"
 	    flag+=1
         for channel in BusChannel:
-	    #print channel
+	    print channel
             if startflag==0 and count>1:
 	        print "start getting data press button to stop"
                 start=time.time()
