@@ -48,8 +48,8 @@ TCA9548_CONFIG_BUS5  =                (0x20)  # 1 = enable, 0 = disable
 TCA9548_CONFIG_BUS6  =                (0x40)  # 1 = enable, 0 = disable 
 TCA9548_CONFIG_BUS7  =                (0x80)  # 1 = enable, 0 = disable
 
-BusChannel=[TCA9548_CONFIG_BUS0,TCA9548_CONFIG_BUS1,TCA9548_CONFIG_BUS2,
-TCA9548_CONFIG_BUS6,TCA9548_CONFIG_BUS5,TCA9548_CONFIG_BUS7]
+BusChannel=[TCA9548_CONFIG_BUS0,TCA9548_CONFIG_BUS1,TCA9548_CONFIG_BUS4,
+TCA9548_CONFIG_BUS5,TCA9548_CONFIG_BUS6,TCA9548_CONFIG_BUS7]
 
 
 #BusChannel=[TCA9548_CONFIG_BUS0,TCA9548_CONFIG_BUS1,TCA9548_CONFIG_BUS2,
@@ -158,7 +158,7 @@ def main(argv):
     accel_tmp=[0]*int(deviceNum)
     count=0
     flag=0
-    addr = ('192.168.43.221',8000)
+    addr = ('192.168.0.103',8000)
     bufsize = 1024
     filename = 'sensor1.txt'
     if mode==1:
@@ -176,6 +176,7 @@ def main(argv):
 	if flag==0:
 	    print "System initialize........"
 	    flag+=1
+        index=0
         for channel in BusChannel:
 	    print channel
             if startflag==0 and count>1:
@@ -205,12 +206,13 @@ def main(argv):
                     realtime=0
                 fileList[fileIndex].write("%f\t%f\t%f\t%f\t%f\t%f\t%f\n" %(accel_xout,accel_yout,accel_zout,gyro_xout,gyro_yout,gyro_zout,realtime))
             elif mode==1:
-                val=math.sqrt(math.pow(int(gyro_xout),2)+math.pow(int(gyro_yout),2)+math.pow(int(gyro_zout),2))
-                val=int(val)
-                val=round(val,4)
-                conn.send("%5s"%(str(val)))
-	    #conn.send("%2s\t%5s\t%5s\t%5s"%(str(fileIndex),str(accel_xout),str(accel_yout),str(accel_zout)))
-            #print "accelx = %f accely = %f accelz = %f\n" %(accel_xout,accel_yout,accel_zout)
+	        accel_xout=round(accel_xout,2)
+	        accel_yout=round(accel_yout,2)
+	        accel_zout=round(accel_zout,2)
+	        gyro_xout=round(gyro_xout,2)
+	        gyro_yout=round(gyro_yout,2)
+	        gyro_zout=round(gyro_zout,2)
+		conn.sendall("%8s\t%8s\t%8s\t%8s\t%8s\t%8s\t%8s"%(str(accel_xout),str(accel_yout),str(accel_zout),str(gyro_xout),str(gyro_yout),str(gyro_zout),str(index)))
             '''
 	    if fileIndex==0 or fileIndex==1 or fileIndex==2 or fileIndex==3 or fileIndex==7:
  	        mpu6050_sla=MPU6050Read.MPU6050Read(0x69,1)
@@ -257,6 +259,7 @@ def main(argv):
 	    #timeArray[count]=timeTmp
             ''' 
             fileIndex+=1
+            index+=1
         '''
         for i in range(int(deviceNum)):
             conn.send("%5s" %(accel_tmp[i]))
