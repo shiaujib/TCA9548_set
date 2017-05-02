@@ -158,16 +158,17 @@ def main(argv):
     accel_tmp=[0]*int(deviceNum)
     count=0
     flag=0
-    addr = ('192.168.0.103',8000)
+    address = ('192.168.43.231',8000)
     bufsize = 1024
     filename = 'sensor1.txt'
     if mode==1:
-        sendsock = socket(AF_INET,SOCK_STREAM)
-        sendsock.bind(addr)
-        sendsock.listen(5)
+        sendsock = socket(AF_INET,SOCK_DGRAM)
+        #sendsock = socket(AF_INET,SOCK_STREAM)
+        #sendsock.bind(address)
+        #sendsock.listen(5)
         print "waiting for client connect"
-        conn,addr = sendsock.accept()
-        print "server already connect client...->",addr
+        #conn,addr = sendsock.accept()
+        print "server already connect client...->",address
     start=time.time()
     while True:
         fflag=0
@@ -212,7 +213,8 @@ def main(argv):
 	        gyro_xout=round(gyro_xout,2)
 	        gyro_yout=round(gyro_yout,2)
 	        gyro_zout=round(gyro_zout,2)
-		conn.sendall("%8s\t%8s\t%8s\t%8s\t%8s\t%8s\t%8s"%(str(accel_xout),str(accel_yout),str(accel_zout),str(gyro_xout),str(gyro_yout),str(gyro_zout),str(index)))
+		sendsock.sendto("%8s\t%8s\t%8s\t%8s\t%8s\t%8s\t%8s"%(str(accel_xout),str(accel_yout),str(accel_zout),str(gyro_xout),str(gyro_yout),str(gyro_zout),str(index)),address)
+		#conn.sendall("%8s\t%8s\t%8s\t%8s\t%8s\t%8s\t%8s"%(str(accel_xout),str(accel_yout),str(accel_zout),str(gyro_xout),str(gyro_yout),str(gyro_zout),str(index)))
             '''
 	    if fileIndex==0 or fileIndex==1 or fileIndex==2 or fileIndex==3 or fileIndex==7:
  	        mpu6050_sla=MPU6050Read.MPU6050Read(0x69,1)
